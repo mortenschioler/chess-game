@@ -16,15 +16,17 @@
 
 (defn read-castling-availability
   [castling-str]
-  (reduce
-    #(conj %
-           (case %2
-             \K {:color :white :side :kingside}
-             \Q {:color :white :side :queenside}
-             \k {:color :black :side :kingside}
-             \q {:color :black :side :queenside}))
+  (if (= castling-str "-")
     #{}
-    castling-str))
+    (reduce
+      #(conj %
+             (case %2
+               \K {:color :white :side :kingside}
+               \Q {:color :white :side :queenside}
+               \k {:color :black :side :kingside}
+               \q {:color :black :side :queenside}))
+      #{}
+      castling-str)))
 
 (defn read-square
   [square-str]

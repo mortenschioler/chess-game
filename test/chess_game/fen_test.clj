@@ -21,5 +21,12 @@
              {:color :white :side :queenside}
              {:color :black :side :kingside}
              {:color :black :side :queenside}}))
-    (is (= (:en-passant-square res) nil))))
+    (is (= (:en-passant-square res) nil)))
+  (let [res (fen/read-game "8/8/8/8/8/8/8/8 w - - 0 1")]
+    (is (= (:side-to-move res) :white))
+    (is (= (:castling-availability res) 
+           #{}))
+    (is (= (:en-passant-square res) nil))
+    (is (= (:halfmove-clock res) 0))
+    (is (= (:fullmove-counter res) 1))))
 
