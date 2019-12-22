@@ -24,4 +24,10 @@
              (fen/read-game "7k/8/8/8/8/8/8/K7 w - - 0 1")
              a1
              {:piece-color :white :piece-type :king})
-           #{b1 b2 a2}))))
+           #{b1 b2 a2})))
+  (testing "knight moves"
+    (is (= (legal-destination-squares 
+             new-game
+             g1
+             {:piece-color :white :piece-type :knight})
+           #{e2 f3 h3}))))

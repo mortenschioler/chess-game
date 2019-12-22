@@ -4,7 +4,8 @@
 (defmulti legal-destination-squares (fn [game from piece] (:piece-type piece)))
 
 (defn legal-destination-squares* [game from]
-  (legal-destination-squares game from (board/get-piece (:board game) from)))
+  (when-let [piece (board/get-piece (:board game) from)]
+    (legal-destination-squares game from piece)))
 
 (defmethod legal-destination-squares :default
   [game from piece]
@@ -14,6 +15,19 @@
   [game from piece]
   (into #{}
         (keep #(board/offset from {% 1}) (:all board/directions))))
+
+(defmethod legal-destination-squares :knight
+  [game from piece]
+  (into #{}
+        (keep (partial board/offset from) 
+              [{:north 2 :west 1}
+               {:north 2 :east 1}
+               {:east 2 :north 1} 
+               {:east 2 :south 1}
+               {:south 2 :east 1}
+               {:south 2 :west 1}
+               {:west 2 :south 1}
+               {:west 2 :north 1}])))
 
 (def rules
   [{:id :active-player-to-move 
