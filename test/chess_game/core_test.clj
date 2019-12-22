@@ -30,4 +30,4 @@
              new-game
              g1
              {:piece-color :white :piece-type :knight})
-           #{e2 f3 h3}))))
+           #{f3 h3}))))

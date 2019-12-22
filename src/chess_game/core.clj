@@ -11,23 +11,62 @@
   [game from piece]
   board/squares)
 
+(defn offset-destination-squares
+  [game from piece offsets]
+  (into #{}
+        (filter #(not= (:piece-color piece) (:piece-color (board/get-piece (:board game) %))) 
+                (keep #(board/offset from %) offsets))))
+
 (defmethod legal-destination-squares :king
   [game from piece]
-  (into #{}
-        (keep #(board/offset from {% 1}) (:all board/directions))))
+  (offset-destination-squares game from piece (for [d (:all board/directions)] {d 1})))
 
 (defmethod legal-destination-squares :knight
   [game from piece]
-  (into #{}
-        (keep (partial board/offset from) 
-              [{:north 2 :west 1}
-               {:north 2 :east 1}
-               {:east 2 :north 1} 
-               {:east 2 :south 1}
-               {:south 2 :east 1}
-               {:south 2 :west 1}
-               {:west 2 :south 1}
-               {:west 2 :north 1}])))
+  (offset-destination-squares game from piece
+    [{:north 2 :west 1}
+     {:north 2 :east 1}
+     {:east 2 :north 1} 
+     {:east 2 :south 1}
+     {:south 2 :east 1}
+     {:south 2 :west 1}
+     {:west 2 :south 1}
+     {:west 2 :north 1}]))
+
+(defn sliding-destination-squares
+  "Sequence of moves sliding in given direction
+  until the path is obstructed by the edge, 
+  a friendly piece, or after an opposing piece 
+  is captured."
+  [game-board piece-color from direction]
+  (reduce
+    (fn [acc square]
+      (let [piece (board/get-piece game-board square)]
+        (cond
+          (not piece) (conj acc square)
+          (not= piece-color (:piece-color piece)) (reduced (conj acc square))
+          (= piece-color (:piece-color piece)) (reduced acc)
+          :panic (ex-info "Error while generating possible square to slide to" 
+                          {:starting-square from :direction direction :accumulated-candidates acc :failing-square square :piece piece}))))
+    #{}
+    (board/slide from direction)))
+
+(defn legal-destination-squares-for-slide
+  [game from piece directions]
+  (set (mapcat #(sliding-destination-squares (:board game) (:piece-color piece) from %) 
+               directions)))
+
+(defmethod legal-destination-squares :rook
+  [game from piece]
+  (legal-destination-squares-for-slide game from piece (:lateral board/directions)))
+
+(defmethod legal-destination-squares :bishop
+  [game from piece]
+  (legal-destination-squares-for-slide game from piece (:diagonal board/directions)))
+
+(defmethod legal-destination-squares :queen
+  [game from piece]
+  (legal-destination-squares-for-slide game from piece (:all board/directions)))
 
 (def rules
   [{:id :active-player-to-move 
