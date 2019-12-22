@@ -9,7 +9,7 @@
 
 (defmethod legal-destination-squares :default
   [game from piece]
-  (set (range 64)))
+  board/squares)
 
 (defmethod legal-destination-squares :king
   [game from piece]

@@ -1,10 +1,11 @@
 (ns chess-game.fen-test
   (:require [clojure.test :refer :all]
-            [chess-game.fen :as fen]))
+            [chess-game.fen :as fen]
+            [chess-board.squares :refer :all]))
 
 (deftest test-read-square
   (is (= (fen/read-square "a8")
-      0)))
+      a8)))
 
 (deftest test-read-game
   (let [res (fen/read-game "8/8/8/8/8/8/8/8 b Kkq e3 ")]
@@ -13,7 +14,7 @@
            #{{:color :white :side :kingside}
              {:color :black :side :kingside}
              {:color :black :side :queenside}}))
-    (is (= (:en-passant-square res) 44)))
+    (is (= (:en-passant-square res) e3)))
   (let [res (fen/read-game "8/8/8/8/8/8/8/8 w KQkq ")]
     (is (= (:side-to-move res) :white))
     (is (= (:castling-availability res) 

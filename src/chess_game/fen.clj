@@ -31,7 +31,7 @@
 (defn read-square
   [square-str]
   (when-not (str/blank? square-str)
-    (eval (symbol (str "chess-board.squares/" square-str)))))
+    (keyword square-str)))
 
 (defn read-en-passant-square
   [square-str]
