@@ -5,4 +5,5 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [chess-board/chess-board "1.3.0-SNAPSHOT"]]
-  :repl-options {:init-ns chess-game.core})
+  :repl-options {:init-ns chess-game.dev}
+  :profiles {:repl {:source-paths ["dev/"]}})

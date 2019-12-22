@@ -17,3 +17,11 @@
     (is (not (legal? new-game {:player :white :from e3 :to e4})))
     (is (not (legal? new-game {:player :white :from e1 :to e1})))
     (is (not (legal? new-game {:player :white :from e1 :to e4})))))
+
+(deftest legaltarget-squares-test
+  (testing "king moves"
+    (is (= (legal-destination-squares 
+             (fen/read-game "7k/8/8/8/8/8/8/K7 w - - 0 1")
+             a1
+             {:piece-color :white :piece-type :king})
+           #{b1 b2 a2}))))

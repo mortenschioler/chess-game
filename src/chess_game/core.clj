@@ -3,9 +3,17 @@
 
 (defmulti legal-destination-squares (fn [game from piece] (:piece-type piece)))
 
+(defn legal-destination-squares* [game from]
+  (legal-destination-squares game from (board/get-piece (:board game) from)))
+
 (defmethod legal-destination-squares :default
   [game from piece]
   (set (range 64)))
+
+(defmethod legal-destination-squares :king
+  [game from piece]
+  (into #{}
+        (keep #(board/offset from {% 1}) (:all board/directions))))
 
 (def rules
   [{:id :active-player-to-move 
@@ -23,10 +31,9 @@
    {:id :piece-movement-is-allowed
     :predicate (fn [game move] 
                  (contains?
-                  (legal-destination-squares 
+                  (legal-destination-squares*
                     game 
-                    (:from move) 
-                    (board/get-piece game (:from move)))
+                    (:from move))
                   (:to move)))}
    ])
 
